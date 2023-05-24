@@ -17,6 +17,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    raiting: {
+        type: Number,
+        required: true
+    },
     description: {
         type: String,
         required: true
@@ -54,6 +58,7 @@ app.post('/products', async (req, res) => {
         const newProduct = new Product({
             title: req.body.title,
             price: req.body.price,
+            raiting: req.body.raiting,
             description: req.body.description,
         })
         const productData = await newProduct.save()
@@ -66,10 +71,13 @@ app.post('/products', async (req, res) => {
 app.get('/products', async (req, res) => {
     try {
         const price = req.query.price
+        const raiting = req.query.raiting
         let products
 
-        if (price) {
-            products = await Product.find({ price: { $gt: price } })
+        if (price && raiting) {
+            products = await Product.find({
+                $and: [{ price: { $gt: price } }, { raiting: { $gt: raiting } }]
+            })
         } else {
             products = await Product.find()
         }
