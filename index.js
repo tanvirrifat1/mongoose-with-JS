@@ -100,6 +100,30 @@ app.get('/products', async (req, res) => {
     }
 })
 
+app.delete('/products/:id', async (req, res) => {
+    try {
+        const id = req.params.id
+        const product = await Product.deleteOne({ _id: id })
+
+        if (product) {
+            res.status(200).send({
+                success: true,
+                message: 'deleted single product',
+                data: product
+            })
+        } else {
+            res.status(404).send({
+                success: false,
+                message: 'products not delete'
+            })
+        }
+
+
+    } catch (error) {
+        res.status(404).send({ message: error.message })
+    }
+})
+
 app.get('/products/:id', async (req, res) => {
     try {
         const id = req.params.id
@@ -118,6 +142,37 @@ app.get('/products/:id', async (req, res) => {
         }
     } catch (error) {
         res.status(500).send({ message: error.message })
+    }
+})
+
+app.put("/products/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updatedProduct = await Product.findByIdAndUpdate({ _id: id }, {
+            $set: {
+                title: req.body.title,
+                price: req.body.price,
+                description: req.body.description,
+                raiting: req.body.raiting
+            }
+        }, { new: true }
+        )
+
+        if (updatedProduct) {
+            res.status(200).send({
+                success: true,
+                message: 'updated single product',
+                data: updatedProduct
+            })
+        } else {
+            res.status(404).send({
+                success: false,
+                message: 'products not not updated'
+            })
+        }
+
+    } catch (error) {
+        res.status(404).send({ message: error.message })
     }
 })
 
